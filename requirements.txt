@@ -1,0 +1,13 @@
+django
+psycopg2
+wheel
+djangorestframework
+pylibmc
+django[argon2]
+django[bcrypt]
+python-dotenv
+redis
+django_redis
+
+django-cors-headers
+gunicorn
