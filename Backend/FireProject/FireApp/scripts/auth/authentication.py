@@ -1,8 +1,6 @@
-from django.contrib.auth import authenticate
-from rest_framework import exceptions, status
 from rest_framework.authentication import BaseAuthentication
 
-from .jwt_token import Jwt
+from FireApp.scripts.token.jwt_token import Jwt
 
 
 class RemoteUserAuthentication(BaseAuthentication):

@@ -1,0 +1,16 @@
+noneedtrash
+.env
+venv/
+
+__pycache__/
+*.py[cod]
+
+.idea
+main.py
+
+**/migrations/**
+!**/migrations
+!**/migrations/__init__.py
+
+README.md
+.gitignore

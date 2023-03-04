@@ -1,13 +1,15 @@
-django
-psycopg2
-wheel
-djangorestframework
-pylibmc
+django==4.1.4
+psycopg2-binary==2.9.5
+wheel==0.38.4
+djangorestframework==3.14.0
+pylibmc==1.6.3
 django[argon2]
 django[bcrypt]
-python-dotenv
-redis
-django_redis
+python-dotenv==0.21.0
+redis==4.5.1
+django_redis==5.2.0
 
-django-cors-headers
-gunicorn
+django-cors-headers==3.13.0
+gunicorn==20.1.0
+PyJWT==2.6.0
+django-cacheops==6.1

@@ -26,7 +26,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 ACCESS_SECRET_KEY = os.getenv('ACCESS_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = bool(os.getenv('DEBUG'))
+DEBUG = (bool(int(os.getenv('DEBUG', 1))))
 
 ALLOWED_HOSTS = ['*']
 
@@ -43,6 +43,7 @@ INSTALLED_APPS = [
 
     'rest_framework',
     'corsheaders',
+    'cacheops',
 
     'FireApp.apps.FireAppConfig',
 ]
@@ -50,11 +51,11 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     # 'django.middleware.cache.UpdateCacheMiddleware',
-
+    'corsheaders.middleware.CorsMiddleware',
 
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
+
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -99,13 +100,14 @@ DATABASES = {
         'PASSWORD': os.getenv('PASSWORD_DB'),
         'HOST': os.getenv('HOST_DB'),
         'PORT': os.getenv('PORT_DB'),
+        'CONN_MAX_AGE': 90,
     }
 }
 
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        # 'FireApp.scripts.authentication.RemoteUserAuthentication',
+        'FireApp.scripts.auth.authentication.RemoteUserAuthentication',
         # 'FireApp.scripts.authentication.RemoteUserAuthentication1',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
@@ -169,17 +171,18 @@ CORS_ALLOW_HEADERS = (
     'x-requested-with',
 )
 CORS_ALLOW_METHODS = ['DELETE', 'GET', 'OPTIONS', 'PATCH', 'POST', 'PUT']
+CORS_ORIGIN_ALLOW_ALL = False
 CORS_ORIGIN_WHITELIST = [
     'http://127.0.0.1:8081',
 ]
 
 
-CACHES = {
-    "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379/10", #os.getenv('CELERY_BROKER_URl'),#
-    }
-}
+# CACHES = {
+#     "default": {
+#         "BACKEND": "django_redis.cache.RedisCache",
+#         "LOCATION": "redis://127.0.0.1:6379/10", #os.getenv('CELERY_BROKER_URl'),#
+#     }
+# }
 
 # Key in `CACHES` dict
 # CACHE_MIDDLEWARE_ALIAS = 'default'
@@ -189,6 +192,18 @@ CACHES = {
 #
 # # Cache key TTL in seconds
 # CACHE_MIDDLEWARE_SECONDS = 10
+
+
+CACHEOPS = {
+    'FireApp.*': {
+        'ops': 'all',
+        'timeout': 60*15,
+    },
+    '*.*': {
+        'timeout': 60*15,
+    }
+}
+CACHEOPS_REDIS = os.getenv('BROKER_URL', 'redis://127.0.0.1:6379/3')
 
 
 LOGGING = {
@@ -206,3 +221,4 @@ LOGGING = {
         }
     },
 }
+

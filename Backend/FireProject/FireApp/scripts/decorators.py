@@ -56,18 +56,18 @@ def exception_jwt(func):
             result = func(*args, **kwargs)
         except jwt.InvalidSignatureError:
             raise exceptions.AuthenticationFailed(
-                {'error_token': 'Token is invalid'},
-                code=status.HTTP_401_UNAUTHORIZED
+                {'error_token': '14'},
+                # code=status.HTTP_401_UNAUTHORIZED
             )
         except jwt.ExpiredSignatureError:
             raise exceptions.AuthenticationFailed(
-                {'error_token': 'Token is expired'},
-                code=status.HTTP_401_UNAUTHORIZED
+                {'error_token': '15'},
+                # code=status.HTTP_401_UNAUTHORIZED
             )
         except jwt.DecodeError:
             raise exceptions.AuthenticationFailed(
-                {'error_token': 'Token is invalid with decode error'},
-                code=status.HTTP_401_UNAUTHORIZED
+                {'error_token': '16'},
+                # code=status.HTTP_401_UNAUTHORIZED
             )
 
         return result

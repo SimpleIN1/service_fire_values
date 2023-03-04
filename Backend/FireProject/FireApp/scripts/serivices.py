@@ -1,8 +1,9 @@
-from django.core.cache import cache
-from django.db.models import Q, Func, F, Value, CharField, DateTimeField, Count
+
+from django.db.models import Q, Func, F, Value, CharField, Count
 
 from .decorators import query_debugger, debug_time_func
-from ..models import FireValues, DateTime
+from FireApp.models import FireValues, DateTime
+
 
 DATE_MIN = 'date_min'
 DATE_MAX = 'date_max'
@@ -29,7 +30,13 @@ class PointsForGetDataAboutFires:
             using(self.database). \
             select_related('date').\
             filter(filter_set). \
-            values('temperature', 'longitude', 'latitude')[:15000]
+            annotate(count=Count('id')). \
+            values('temperature', 'longitude', 'latitude'). \
+            order_by('-temperature')
+
+        # distinct('temperature', 'longitude', 'latitude'). \  annotate(count=Count('*')).\  order_by('-temperature'). \
+        #     values('longitude', 'latitude'). \
+
         return {'points': queryset}
 
     @debug_time_func
@@ -58,6 +65,9 @@ class PointsForGetDataAboutFires:
 
     @query_debugger
     def get_points_fires(self, request, *args, **kwargs):
+        # print('REMOTE_ADDR: ', request.META['REMOTE_ADDR'])
+        # print(request.META)
+
         date_min = request.GET.get(DATE_MIN, None)
         date_max = request.GET.get(DATE_MAX, None)
         date = request.GET.get(DATE, None)
@@ -66,6 +76,7 @@ class PointsForGetDataAboutFires:
             filter_set = Q(date__date__gte=date_min) \
                          & Q(date__date__lte=date_max)
         elif date:
+            # print(date)
             filter_set = Q(date__date__date=date)
         else:
             return []
@@ -80,7 +91,7 @@ class DateUnique:
 
     @debug_time_func
     def get_dates(self, request, *args, **kwargs):
-        cache.delete('date_time')
+        # cache.delete('date_time')
         queryset = self.model.\
             objects.using(self.database).\
             annotate(formatted_date=Func(F('date'),
@@ -92,11 +103,13 @@ class DateUnique:
         # queryset = FireValues.objects.using(self.database). \
         #     filter(date__date__date='2022-12-22').aggregate(count=Count('id'))
 
-        # queryset = FireValues.objects.using(self.database). \
-        #     filter(date__date__date='2022-12-22').values('temperature', 'longitude', 'latitude')[:100000]
+        # queryset = FireValues.objects.using(self.database).select_related('date'). \
+        #     filter(date_id__gte=1464, date_id__lte=1565)
 
+        #date__date__date='2023-01-16'
         #.values('temperature', 'longitude', 'latitude')[:500000] #distinct('longitude', 'latitude'). - проблема долгой обработки
         # print(queryset)#.select_related('date'). #.distinct('longitude', 'latitude') aggregate(topping_count=Count('id'))
+        # .group_by('temperature', 'latitude', 'longitude')
         return {'days': queryset}
 
 
