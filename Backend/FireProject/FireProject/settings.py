@@ -28,7 +28,7 @@ ACCESS_SECRET_KEY = os.getenv('ACCESS_SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = (bool(int(os.getenv('DEBUG', 1))))
 
-ALLOWED_HOSTS = ['45.146.167.78',]#'*']
+ALLOWED_HOSTS = ['45.146.167.78','0.0.0.0',]#'*']
 
 
 # Application definition
@@ -65,6 +65,8 @@ MIDDLEWARE = [
 
     # 'django.middleware.cache.FetchFromCacheMiddleware',
 ]
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'http')
 
 ROOT_URLCONF = 'FireProject.urls'
 
@@ -114,6 +116,12 @@ REST_FRAMEWORK = {
         # 'rest_framework.permissions.IsAuthenticated',
     ),
 }
+
+
+if not DEBUG:
+    REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"] = (
+            "rest_framework.renderers.JSONRenderer",
+        )
 
 
 
