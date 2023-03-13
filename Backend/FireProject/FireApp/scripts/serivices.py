@@ -1,5 +1,5 @@
 
-from django.db.models import Q, Func, F, Value, CharField, Count
+from django.db.models import Q, Func, F, Value, CharField
 
 from .decorators import query_debugger, debug_time_func
 from FireApp.models import FireValues, DateTime
@@ -25,17 +25,14 @@ class PointsForGetDataAboutFires:
     model = FireValues
 
     def __get_queryset(self, filter_set):
-        queryset = self.model.\
-            objects.\
-            using(self.database). \
-            select_related('date').\
-            filter(filter_set). \
-            annotate(count=Count('id')). \
-            values('temperature', 'longitude', 'latitude'). \
-            order_by('-temperature')
 
-        # distinct('temperature', 'longitude', 'latitude'). \  annotate(count=Count('*')).\  order_by('-temperature'). \
-        #     values('longitude', 'latitude'). \
+        queryset = self.model. \
+            objects. \
+            using(self.database). \
+            select_related('date'). \
+            filter(filter_set). \
+            values('temperature', 'longitude', 'latitude'). \
+            annotate(datetime=F('date__date'))
 
         return {'points': queryset}
 
@@ -77,7 +74,8 @@ class PointsForGetDataAboutFires:
                          & Q(date__date__lte=date_max)
         elif date:
             # print(date)
-            filter_set = Q(date__date__date=date)
+            filter_set = Q(date__date__date=date)#Q(date_id__lte=DateTime.objects.filter(date__date=date).annotate(max=Max('id'))) \
+                         #& Q(date_id__gte=DateTime.objects.filter(date__date=date).annotate(max=Min('id')))
         else:
             return []
 
@@ -100,16 +98,6 @@ class DateUnique:
                                          output_field=CharField())).\
             distinct('formatted_date').values('formatted_date')
 
-        # queryset = FireValues.objects.using(self.database). \
-        #     filter(date__date__date='2022-12-22').aggregate(count=Count('id'))
-
-        # queryset = FireValues.objects.using(self.database).select_related('date'). \
-        #     filter(date_id__gte=1464, date_id__lte=1565)
-
-        #date__date__date='2023-01-16'
-        #.values('temperature', 'longitude', 'latitude')[:500000] #distinct('longitude', 'latitude'). - проблема долгой обработки
-        # print(queryset)#.select_related('date'). #.distinct('longitude', 'latitude') aggregate(topping_count=Count('id'))
-        # .group_by('temperature', 'latitude', 'longitude')
         return {'days': queryset}
 
 

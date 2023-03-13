@@ -28,7 +28,7 @@ ACCESS_SECRET_KEY = os.getenv('ACCESS_SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = (bool(int(os.getenv('DEBUG', 1))))
 
-ALLOWED_HOSTS = ['45.146.167.78','0.0.0.0',]#'*']
+ALLOWED_HOSTS = ['45.146.167.78', '0.0.0.0', '127.0.0.1']#'*']
 
 
 # Application definition
@@ -214,19 +214,19 @@ CACHEOPS = {
 CACHEOPS_REDIS = os.getenv('BROKER_URL', 'redis://127.0.0.1:6379/3')
 
 
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-        },
-    },
-    'loggers': {
-        'django.db.backends': {
-            'level': 'DEBUG',
-            'handlers': ['console'],
-        }
-    },
-}
-
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'handlers': {
+#         'console': {
+#             'class': 'logging.StreamHandler',
+#         },
+#     },
+#     'loggers': {
+#         'django.db.backends': {
+#             'level': 'DEBUG',
+#             'handlers': ['console'],
+#         }
+#     },
+# }
+#
