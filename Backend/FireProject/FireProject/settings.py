@@ -28,7 +28,7 @@ ACCESS_SECRET_KEY = os.getenv('ACCESS_SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = (bool(int(os.getenv('DEBUG', 1))))
 
-ALLOWED_HOSTS = ['45.146.167.78', '45.9.40.14', '0.0.0.0', '127.0.0.1']#'*']
+ALLOWED_HOSTS = ['45.146.167.78', '45.9.40.14', '0.0.0.0', '127.0.0.1', 'localhost']#'*']
 
 
 # Application definition
@@ -181,7 +181,7 @@ CORS_ALLOW_HEADERS = (
 CORS_ALLOW_METHODS = ['DELETE', 'GET', 'OPTIONS', 'PATCH', 'POST', 'PUT']
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ORIGIN_WHITELIST = [
-    'http://127.0.0.1:8081',
+    'http://localhost:3000',
 ]
 
 

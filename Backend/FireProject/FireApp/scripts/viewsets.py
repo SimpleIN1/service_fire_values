@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 
 class FiresViewset(APIView):
     queryset_func_link = None
-    permission_classes = (IsAuthenticated, )
+   # permission_classes = (IsAuthenticated, )
 
     def permission_denied(self, request, message=None, code=None): # override
         """
