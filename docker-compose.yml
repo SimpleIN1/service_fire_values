@@ -37,7 +37,7 @@ services:
         
             DEBUG: "${DEBUG}"
           
-            BROKER_URl: "redis://redis:6379/0"
+            BROKER_URL: "redis://redis:6379/0"
 
             NAME_DB: "${NAME_DB}" 
             USER_DB: "${USER_DB}" 
@@ -49,7 +49,7 @@ services:
         image: postgres
         restart: unless-stopped
         volumes:
-            - postgres_db_volume:/var/lib/postgresql/data/
+            - postgres-db-volume:/var/lib/postgresql/data
         ports:
             - "5432:5432"
         env_file:
@@ -60,6 +60,7 @@ services:
             POSTGRES_USER: "${USER_DB}" 
         
 volumes:
-    postgres_db_volume:
-
+    postgres-db-volume:
+        external: true
+        name: pg-test
 
