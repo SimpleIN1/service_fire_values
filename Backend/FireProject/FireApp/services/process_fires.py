@@ -1,3 +1,4 @@
+import time
 
 from django.db.models import Q, Func, F, Value, CharField
 
@@ -28,13 +29,13 @@ class PointsForGetDataAboutFires:
 
         queryset = self.model. \
             objects. \
-            using(self.database). \
             select_related('date'). \
             filter(filter_set). \
             values('temperature', 'longitude', 'latitude'). \
             annotate(datetime=F('date__date'))
 
         return {'points': queryset}
+        # return JsonResponse(queryset)
 
     @debug_time_func
     def get_points_fires_today(self, request, *args, **kwargs):
@@ -60,10 +61,8 @@ class PointsForGetDataAboutFires:
 
         return queryset
 
-    @query_debugger
+    @debug_time_func
     def get_points_fires(self, request, *args, **kwargs):
-        # print('REMOTE_ADDR: ', request.META['REMOTE_ADDR'])
-        # print(request.META)
 
         date_min = request.GET.get(DATE_MIN, None)
         date_max = request.GET.get(DATE_MAX, None)
@@ -83,22 +82,70 @@ class PointsForGetDataAboutFires:
         return queryset
 
 
+
+
+'''
+json
+{
+    date:[
+        year:[
+            month: [
+                    
+            ],
+            month: [
+                    
+            ]    
+        ],
+        year:[
+            
+        ],
+    ]
+}
+
+'''
+
+
 class DateUnique:
     database = 'remoteFiresDb'
     model = DateTime
 
+    @staticmethod
+    def do_format_date(queryset):
+        '''
+        :param queryset: набор даты из базы данных
+        :return: отформатированные даты для клиента
+        '''
+        out_json = {}
+
+        for item in queryset:
+            year, months, day = item['formatted_date'].split('-')
+
+            if not out_json.get(year):
+                out_json[year] = {}
+            if not out_json[year].get(months):
+                out_json[year][months] = []
+
+            if not (day in out_json[year][months]):
+                out_json[year][months].append(day)
+
+        return out_json
+
     @debug_time_func
     def get_dates(self, request, *args, **kwargs):
-        # cache.delete('date_time')
+
         queryset = self.model.\
-            objects.using(self.database).\
+            objects.\
             annotate(formatted_date=Func(F('date'),
                                          Value('YYYY-MM-DD'),
                                          function='to_char',
                                          output_field=CharField())).\
             distinct('formatted_date').values('formatted_date')
 
-        return {'days': queryset}
+        date_json = self.do_format_date(queryset)
+
+        return {
+            'date': date_json
+        }
 
 
 

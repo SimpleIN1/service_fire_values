@@ -70,5 +70,5 @@ services:
 volumes:
     postgres-db-volume:
         external: true
-        name: pg-test
+        name: pg-data-test
 

@@ -1,7 +1,7 @@
 
-from .scripts.viewsets import FiresViewset
-from .scripts.serivices import (PointsForGetDataAboutFires as Points,
-                                DateUnique as Date)
+from .services.viewsets import FiresViewset
+from .services.process_fires import (PointsForGetDataAboutFires as Points,
+                                     DateUnique as Date)
 
 
 class FiresTodayAPIView(FiresViewset, Points):

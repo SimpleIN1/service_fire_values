@@ -1,6 +1,6 @@
 from rest_framework.authentication import BaseAuthentication
 
-from FireApp.scripts.token.jwt_token import Jwt
+from FireApp.services.token.jwt_token import Jwt
 
 
 class RemoteUserAuthentication(BaseAuthentication):

@@ -28,7 +28,7 @@ ACCESS_SECRET_KEY = os.getenv('ACCESS_SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = (bool(int(os.getenv('DEBUG', 1))))
 
-ALLOWED_HOSTS = ['45.146.167.78', '45.9.40.14', '45.9.43.3', '0.0.0.0', '127.0.0.1', 'localhost']#'*']
+ALLOWED_HOSTS = ['0.0.0.0', '127.0.0.1', 'localhost', '192.168.1.8']#'*']
 #45.146.167.78
 
 # Application definition
@@ -62,7 +62,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
-
     # 'django.middleware.cache.FetchFromCacheMiddleware',
 ]
 
@@ -93,24 +92,22 @@ WSGI_APPLICATION = 'FireProject.wsgi.application'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {},
-
-    'remoteFiresDb': {
+    'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': os.getenv('NAME_DB'),
         'USER': os.getenv('USER_DB'),
         'PASSWORD': os.getenv('PASSWORD_DB'),
         'HOST': os.getenv('HOST_DB'),
         'PORT': os.getenv('PORT_DB'),
-        'CONN_MAX_AGE': 90,
+        'CONN_MAX_AGE': 130,
     }
 }
 
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'FireApp.scripts.auth.authentication.RemoteUserAuthentication',
-        # 'FireApp.scripts.authentication.RemoteUserAuthentication1',
+        'FireApp.services.auth.authentication.RemoteUserAuthentication',
+        # 'FireApp.services.authentication.RemoteUserAuthentication1',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
         # 'rest_framework.permissions.IsAuthenticated',

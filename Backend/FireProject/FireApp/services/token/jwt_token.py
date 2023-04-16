@@ -3,7 +3,7 @@ from django.conf import settings
 import jwt
 from uuid import uuid4
 
-from FireApp.scripts.decorators import exception_jwt
+from FireApp.services.decorators import exception_jwt
 
 
 class Jwt:

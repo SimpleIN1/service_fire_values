@@ -41,7 +41,6 @@ def debug_time_func(func):
         start = time.perf_counter()
         result = func(*args, **kwargs)
         end = time.perf_counter()
-
         print(f'Time of work func {func.__name__} : {(end - start):.4f}s')
         return result
     return inner_func
