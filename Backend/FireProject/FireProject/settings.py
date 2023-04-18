@@ -44,24 +44,31 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'cacheops',
+    # 'debug_toolbar',
 
     'FireApp.apps.FireAppConfig',
 ]
-
+INTERNAL_IPS = [
+    '127.0.0.1',
+]
+# DEBUG_TOOLBAR_PANELS = [
+#     'debug_toolbar.panels.profiling.ProfilingPanel',
+# ]
 
 MIDDLEWARE = [
     # 'django.middleware.cache.UpdateCacheMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
-
+    # 'corsheaders.middleware.CorsMiddleware',
+    #
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-
+    #
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
+    # 'debug_toolbar.middleware.DebugToolbarMiddleware',
     # 'django.middleware.cache.FetchFromCacheMiddleware',
 ]
 
@@ -202,10 +209,10 @@ CORS_ORIGIN_WHITELIST = [
 CACHEOPS = {
     'FireApp.*': {
         'ops': 'all',
-        'timeout': 60*15,
+        'timeout': 60*60*10,
     },
     '*.*': {
-        'timeout': 60*15,
+        'timeout': 60*60*10,
     }
 }
 CACHEOPS_REDIS = os.getenv('BROKER_URL', 'redis://127.0.0.1:6379/3')

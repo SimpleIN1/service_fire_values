@@ -1,8 +1,6 @@
-import time
-
 from django.db.models import Q, Func, F, Value, CharField
 
-from .decorators import query_debugger, debug_time_func
+from FireApp.decorators import debug_time_func
 from FireApp.models import FireValues, DateTime
 
 
@@ -34,6 +32,9 @@ class PointsForGetDataAboutFires:
             values('temperature', 'longitude', 'latitude'). \
             annotate(datetime=F('date__date'))
 
+        # queryset = self.model. \
+        #     objects.all().values()
+        # print(123123)
         return {'points': queryset}
         # return JsonResponse(queryset)
 
@@ -78,7 +79,8 @@ class PointsForGetDataAboutFires:
         else:
             return []
 
-        queryset = self.__get_queryset(filter_set=filter_set)
+        queryset = self.__get_queryset(filter_set=filter_set) #{'json': 'json'}
+
         return queryset
 
 
@@ -118,15 +120,16 @@ class DateUnique:
         out_json = {}
 
         for item in queryset:
-            year, months, day = item['formatted_date'].split('-')
+            date = item['formatted_date']
+            year, months, day = date.split('-')
 
             if not out_json.get(year):
                 out_json[year] = {}
             if not out_json[year].get(months):
                 out_json[year][months] = []
 
-            if not (day in out_json[year][months]):
-                out_json[year][months].append(day)
+            if not (date in out_json[year][months]):
+                out_json[year][months].append(date)
 
         return out_json
 

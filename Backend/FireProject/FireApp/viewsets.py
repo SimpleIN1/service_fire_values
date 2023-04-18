@@ -23,3 +23,5 @@ class FiresViewset(APIView):
     def get(self, request, *args, **kwargs):
         queryset = self.queryset_func_link(request, args, kwargs)
         return Response(queryset, status=status.HTTP_200_OK)
+        # return HttpResponse(json.dumps(queryset))
+        # return Response({'queryset':'12'})

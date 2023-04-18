@@ -25,7 +25,7 @@ class RemoteUserAuthentication(BaseAuthentication):
         #         code=status.HTTP_401_UNAUTHORIZED
         #     )
         user = self.User(True)
-        print('REMOTE')
+        # print('REMOTE')
         return (user, None)
 
     class User:
