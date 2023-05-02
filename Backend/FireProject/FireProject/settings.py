@@ -124,7 +124,9 @@ REST_FRAMEWORK = {
 
 if not DEBUG:
     REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"] = (
-            "rest_framework.renderers.JSONRenderer",
+            # 'drf_ujson.renderers.UJSONRenderer',
+            "drf_orjson_renderer.renderers.ORJSONRenderer",
+            # "rest_framework.renderers.JSONRenderer",
         )
 
 
@@ -206,16 +208,16 @@ CORS_ORIGIN_WHITELIST = [
 # CACHE_MIDDLEWARE_SECONDS = 10
 
 
-CACHEOPS = {
-    'FireApp.*': {
-        'ops': 'all',
-        'timeout': 60*60*10,
-    },
-    '*.*': {
-        'timeout': 60*60*10,
-    }
-}
-CACHEOPS_REDIS = os.getenv('BROKER_URL', 'redis://127.0.0.1:6379/3')
+# CACHEOPS = {
+#     'FireApp.*': {
+#         'ops': 'all',
+#         'timeout': 60*60*10,
+#     },
+#     '*.*': {
+#         'timeout': 60*60*10,
+#     }
+# }
+# CACHEOPS_REDIS = os.getenv('BROKER_URL', 'redis://127.0.0.1:6379/3')
 
 
 LOGGING = {

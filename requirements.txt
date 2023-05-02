@@ -13,3 +13,8 @@ django-cors-headers==3.13.0
 gunicorn==20.1.0
 PyJWT==2.6.0
 django-cacheops==6.1
+drf-orjson-renderer==1.7.1
+
+fpdf2==2.7.3
+shapely==2.0.1
+Fiona==1.9.3
