@@ -32,30 +32,30 @@ class PointsForGetDataAboutFires:
             select_related('date'). \
             filter(filter_set&Q(tech=False)). \
             values('temperature', 'longitude', 'latitude'). \
-            annotate(datetime=F('date__date'))
+            annotate(datetime=F('datetime__datetime'))
 
         return {'points': queryset}
 
     @debug_time_func
     def get_points_fires_today(self, request, *args, **kwargs):
         queryset = self.__get_queryset(
-            filter_set=Q(date__date__date=FuncTemplateOverride(template="current_date"))
+            filter_set=Q(datetime__datetime__date=FuncTemplateOverride(template="current_date"))
         )
 
         return queryset
 
     def get_points_after_twentyfour(self, request, *args, **kwargs):
         queryset = self.__get_queryset(
-            filter_set=Q(date__date__lte=FuncTemplateOverride(template="NOW()"))
-                       & Q(date__date__gte=FuncTemplateOverride(template="NOW() - interval '24 hours'"))
+            filter_set=Q(datetime__datetime__lte=FuncTemplateOverride(template="NOW()"))
+                       & Q(datetime__datetime__gte=FuncTemplateOverride(template="NOW() - interval '24 hours'"))
         )
 
         return queryset
 
     def get_points_after_week(self, request, *args, **kwargs):
         queryset = self.__get_queryset(
-            filter_set=Q(date__date__lte=FuncTemplateOverride(template="NOW()"))
-                       & Q(date__date__gte=FuncTemplateOverride(template="NOW() - interval '1 week'"))
+            filter_set=Q(datetime__datetime__lte=FuncTemplateOverride(template="NOW()"))
+                       & Q(datetime__datetime__gte=FuncTemplateOverride(template="NOW() - interval '1 week'"))
         )
 
         return queryset
@@ -68,10 +68,10 @@ class PointsForGetDataAboutFires:
         date = request.GET.get(DATE, None)
 
         if date_min and date_max and date_max != date_min:
-            filter_set = Q(date__date__gte=date_min) \
-                         & Q(date__date__lte=date_max)
+            filter_set = Q(datetime__datetime__gte=date_min) \
+                         & Q(datetime__datetime__lte=date_max)
         elif date:
-            filter_set = Q(date__date__date=date)
+            filter_set = Q(datetime__datetime__date=date)
         else:
             return []
 
@@ -80,9 +80,9 @@ class PointsForGetDataAboutFires:
         return queryset
 
     @staticmethod
-    def get_fire_values_for_pdf(subject_tag, date_time):
-        return FireValue.objects.select_related('district', 'settlement', 'date', 'satellite').\
-            filter(district__subject__tag=subject_tag, tech=False, date__date=date_time)
+    def get_fire_values_for_pdf_shp(subject_tag, date_time):
+        return FireValue.objects.select_related('district', 'settlement', 'datetime').\
+            filter(district__subject__tag=subject_tag, tech=False, datetime__datetime=date_time)
 
 
 class SettlementLeast5:
@@ -95,10 +95,10 @@ class SettlementLeast5:
         list_ids = request.GET.get(LIST_IDS, None)
 
         if date_min and date_max and date_max != date_min:
-            filter_set = Q(fire_value__date__date__gte=date_min) \
-                         & Q(fire_value__date__date__lte=date_max)
+            filter_set = Q(fire_value__datetime__datetime__gte=date_min) \
+                         & Q(fire_value__datetime__datetime__lte=date_max)
         elif date:
-            filter_set = Q(fire_value__date__date__date=date)
+            filter_set = Q(fire_value__datetime__datetime__date=date)
         else:
             return [] #filter_set&
 
@@ -174,7 +174,7 @@ class DateUnique:
 
         queryset = self.model.\
             objects.\
-            annotate(formatted_date=Func(F('date'),
+            annotate(formatted_date=Func(F('datetime'),
                                          Value('YYYY-MM-DD'),
                                          function='to_char',
                                          output_field=CharField())).\

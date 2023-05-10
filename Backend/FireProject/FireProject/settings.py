@@ -28,7 +28,7 @@ ACCESS_SECRET_KEY = os.getenv('ACCESS_SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = (bool(int(os.getenv('DEBUG', 1))))
 
-ALLOWED_HOSTS = ['0.0.0.0', '127.0.0.1', 'localhost', '192.168.1.8']#'*']
+ALLOWED_HOSTS = ['*']
 #45.146.167.78
 
 # Application definition
@@ -121,6 +121,11 @@ REST_FRAMEWORK = {
     ),
 }
 
+REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"] = (
+    # 'drf_ujson.renderers.UJSONRenderer',
+    "drf_orjson_renderer.renderers.ORJSONRenderer",
+    # "rest_framework.renderers.JSONRenderer",
+)
 
 if not DEBUG:
     REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"] = (
@@ -185,10 +190,11 @@ CORS_ALLOW_HEADERS = (
     'x-requested-with',
 )
 CORS_ALLOW_METHODS = ['DELETE', 'GET', 'OPTIONS', 'PATCH', 'POST', 'PUT']
-CORS_ORIGIN_ALLOW_ALL = False
-CORS_ORIGIN_WHITELIST = [
-    'http://45.9.43.3:80',
-]
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
+# CORS_ORIGIN_WHITELIST = [
+#     'http://45.9.43.3:80',
+# ]
 
 
 # CACHES = {
@@ -208,16 +214,16 @@ CORS_ORIGIN_WHITELIST = [
 # CACHE_MIDDLEWARE_SECONDS = 10
 
 
-# CACHEOPS = {
-#     'FireApp.*': {
-#         'ops': 'all',
-#         'timeout': 60*60*10,
-#     },
-#     '*.*': {
-#         'timeout': 60*60*10,
-#     }
-# }
-# CACHEOPS_REDIS = os.getenv('BROKER_URL', 'redis://127.0.0.1:6379/3')
+CACHEOPS = {
+    'FireApp.*': {
+        'ops': 'all',
+        'timeout': 60*60*10,
+    },
+    '*.*': {
+        'timeout': 60*60*10,
+    }
+}
+CACHEOPS_REDIS = os.getenv('BROKER_URL', 'redis://127.0.0.1:6379/3')
 
 
 LOGGING = {

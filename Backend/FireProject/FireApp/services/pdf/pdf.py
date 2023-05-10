@@ -181,8 +181,8 @@ class PDF(Base, FPDF):
                 str(item.distance_to_stln), "", "", ""
             ])
 
-            if item.satellite.tag not in self.satellites:
-                self.satellites += '_'+item.satellite.tag
+            if item.satellite not in self.satellites:
+                self.satellites += '_'+item.satellite
 
     def make_content(self): # основное содержимое страницы
         self.set_font('TimesNewRoman', size=15)

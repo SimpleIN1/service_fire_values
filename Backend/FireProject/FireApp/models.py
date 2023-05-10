@@ -12,7 +12,7 @@ from django.db import models
 
 
 class DateTime(models.Model):
-    date = models.DateTimeField(unique=True, blank=True, null=True)
+    datetime = models.DateTimeField(unique=True, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -47,20 +47,20 @@ class Settlement(models.Model):
         db_table = 'settlement'
 
 
-class Satellite(models.Model):
-    name = models.CharField(max_length=100)
-    tag = models.CharField(max_length=20)
-
-    class Meta:
-        managed = False
-        db_table = 'satellite'
+# class Satellite(models.Model):
+#     name = models.CharField(max_length=100)
+#     tag = models.CharField(max_length=20)
+#
+#     class Meta:
+#         managed = False
+#         db_table = 'satellite'
 
 
 class FireValue(models.Model):
     temperature = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
     longitude = models.DecimalField(max_digits=8, decimal_places=5, blank=True, null=True)
     latitude = models.DecimalField(max_digits=8, decimal_places=5, blank=True, null=True)
-    date = models.ForeignKey(DateTime, models.DO_NOTHING, blank=True, null=True)
+    datetime = models.ForeignKey(DateTime, models.DO_NOTHING, blank=True, null=True)
 
     tech = models.BooleanField()
 
@@ -68,7 +68,15 @@ class FireValue(models.Model):
     settlement = models.ForeignKey(Settlement, on_delete=models.CASCADE)
     district = models.ForeignKey(District, on_delete=models.CASCADE)
 
-    satellite = models.ForeignKey(Satellite, on_delete=models.CASCADE)
+    # satellite = models.ForeignKey(Satellite, on_delete=models.CASCADE)
+
+    # satellite = Column(String(20))
+    # round = Column(Integer)
+    # alg_name = Column(String(20))
+
+    satellite = models.CharField(max_length=20)
+    round = models.IntegerField()
+    alg_name = models.CharField(max_length=20)
 
     class Directly(models.IntegerChoices):
         N = 1, 'север'

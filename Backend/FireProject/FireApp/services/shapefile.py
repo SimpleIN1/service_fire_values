@@ -11,19 +11,26 @@ from FireApp.services.archive import Archiving
 
 
 class Base:
-    def __init__(self, subject_tag, date_time):
+    def __init__(self, subject_tag, date_time, operator_fio=None, cloud_shielding=None):
         self.subject_tag = subject_tag.upper()
         self.date_time = datetime.datetime.strptime(date_time, '%Y-%m-%dT%H:%M:%S')
+        self.cloud_shielding = cloud_shielding
+        self.operator_fio = operator_fio
 
-    def make_file_name(self, is_dir=False):
+    def make_file_name(self, is_dir=False, is_shp=False):
         if is_dir:
-            return f'{self.subject_tag}_{self.get_date("")}_{self.get_time("_")}{self.satellites}'
+            if self.operator_fio and self.cloud_shielding and not is_shp:
+                return f'{self.subject_tag}_{self.get_date("")}_{self.get_time("_")}{self.satellites}_{self.cloud_shielding}_{self.operator_fio.replace(" ", "_")}'
+            else:
+                return f'{self.subject_tag}_{self.get_date("")}_{self.get_time("_")}{self.satellites}'
         else:
-            return f'{self.subject_tag}_{self.get_date("")}{self.satellites}'
+            return f'{self.subject_tag}_{self.get_date("")}{self.satellites}_{self.get_time(delimiter="_", only_minutes_and_hours=True)}'
 
-    def get_time(self, delimiter=':', only_minutes_and_hours=False):
+    def get_time(self, delimiter=':', only_minutes_and_hours=False, only_hour=False):
         if only_minutes_and_hours:
             return self.date_time.strftime(f"%H{delimiter}%M")
+        elif only_hour:
+            return self.date_time.strftime(f'%H')
         else:
             return self.date_time.strftime(f"%H{delimiter}%M{delimiter}%S")
 
@@ -52,8 +59,8 @@ class ShpFile(Base):
     def get_satellite(self):
         satellite = ''
         for item in self.queryset:
-            if item.satellite.tag not in satellite:
-                satellite += '_'+item.satellite.tag
+            if item.satellite not in satellite:
+                satellite += '_'+item.satellite
         return satellite
 
     def __init__(self, subject_tag, date_time, queryset):
@@ -62,7 +69,7 @@ class ShpFile(Base):
         self.queryset = queryset
         self.satellites = self.get_satellite()
         self.filename = self.make_file_name(is_dir=False)
-        self.dir_name = self.make_file_name(is_dir=True)
+        self.dir_name = self.make_file_name(is_dir=True, is_shp=True)
         self.path = f'FireApp/services/out_files/shp/{self.dir_name}'
         self.path_to_file = f'{self.path}/{self.filename}.zip'
 

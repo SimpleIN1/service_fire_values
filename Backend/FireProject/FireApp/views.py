@@ -70,7 +70,7 @@ class ShapeFileLoadAPIView(BaseAPIView):
         # print('Start function')
         # start = time.perf_counter()
 
-        queryset = PointsForGetDataAboutFires.get_fire_values_for_pdf(
+        queryset = PointsForGetDataAboutFires.get_fire_values_for_pdf_shp(
             serializer.data['subject_tag'],
             serializer.data['date_time'],
             # subject_tag='ALTAY',
@@ -89,7 +89,7 @@ class ShapeFileLoadAPIView(BaseAPIView):
             else:
                 filename = shp.make_archive()
         else:
-            return Response({'file_info': 'Data is not(1)'})
+            return Response({'file_info': '1'}, status=400) # data is not
         # end = time.perf_counter()
         # print(f'Time of work - {(end - start):.4f}s')
         return FileResponse(open(filename, 'rb'))
@@ -103,7 +103,7 @@ class PDFLoadAPIView(BaseAPIView):
         serializer.is_valid(raise_exception=True)
         # print('Start function')
         # start = time.perf_counter()
-        queryset = PointsForGetDataAboutFires.get_fire_values_for_pdf(
+        queryset = PointsForGetDataAboutFires.get_fire_values_for_pdf_shp(
             serializer.data['subject_tag'],
             serializer.data['date_time']
         )
@@ -122,7 +122,7 @@ class PDFLoadAPIView(BaseAPIView):
             else:
                 filename = pdf.build_file()
         else:
-            return Response({'file_inf': 'Data is not(1)'})
+            return Response({'file_info': '1'}, status=400) # data is not
         # end = time.perf_counter()
         # print(f'Time of work - {(end - start):.4f}s')
         return FileResponse(open(filename, 'rb'))
