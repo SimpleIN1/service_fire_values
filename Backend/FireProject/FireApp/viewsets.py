@@ -3,7 +3,7 @@ import json
 from django.core import serializers
 from django.http import JsonResponse, HttpResponse, StreamingHttpResponse
 from rest_framework import status, exceptions
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -24,7 +24,7 @@ class BaseAPIView(APIView):
 
 class FiresViewset(APIView):
     queryset_func_link = None
-   # permission_classes = (IsAuthenticated, )
+    permission_classes = (AllowAny, )#(IsAuthenticated, )
 
     def get(self, request, *args, **kwargs):
         queryset = self.queryset_func_link(request, args, kwargs)

@@ -9,6 +9,8 @@ class RemoteUserAuthentication(BaseAuthentication):
 
         token = request.headers.get('Authorization', None)
 
+        #print(token)
+
         if token is None:
             return None
 
@@ -16,7 +18,7 @@ class RemoteUserAuthentication(BaseAuthentication):
             token = token.split(' ')[1]
         except IndexError:
             return None
-
+        print(token)
         payload = Jwt.get_payload_from_access_token(token)
 
         # if payload is None:
