@@ -36,6 +36,10 @@ class DaysFiresAPIView(FiresViewset, Date):
     queryset_func_link = Date.get_dates
 
 
+class TimeOfDateFiresAPIView(FiresViewset, Date):
+    queryset_func_link = Date.get_time_of_date
+
+
 class SettlementLeast5APIView(FiresViewset, Date):
     queryset_func_link = SettlementLeast5.get_settlement_least_5km
 

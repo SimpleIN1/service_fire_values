@@ -9,7 +9,8 @@ from FireApp.views import (FiresAPIView,
                            FiresAfterWeekAPIView,
                            TestAPIView, PDFLoadAPIView,
                            ShapeFileLoadAPIView,
-                           SettlementLeast5APIView)
+                           SettlementLeast5APIView,
+                           TimeOfDateFiresAPIView)
 
 
 urlpatterns = [
@@ -18,6 +19,7 @@ urlpatterns = [
     path('points/twentyfourhours/', FiresAfterTwentyFourAPIView.as_view(), name='fires after 24 hours'),
     path('points/week/', FiresAfterWeekAPIView.as_view(), name='fires after week'),
     path('days/', DaysFiresAPIView.as_view(), name='day fires'),
+    path('time_of_date/', TimeOfDateFiresAPIView.as_view(), name='time of date'),
 
     path('load/pdf/', PDFLoadAPIView.as_view(), name='pdf'),
     path('load/shapefile/', ShapeFileLoadAPIView.as_view(), name='shapefile'),

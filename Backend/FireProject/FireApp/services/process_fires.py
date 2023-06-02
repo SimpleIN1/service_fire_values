@@ -60,6 +60,21 @@ class PointsForGetDataAboutFires:
 
         return queryset
 
+    # def fetch_filter_set(self, request, parameter):
+    #     date_min = request.GET.get(DATE_MIN, None)
+    #     date_max = request.GET.get(DATE_MAX, None)
+    #     date = request.GET.get(DATE, None)
+    #
+    #     if date_min and date_max and date_max != date_min:
+    #         filter_set = Q(datetime__datetime__gte=date_min) \
+    #                      & Q(datetime__datetime__lte=date_max)
+    #     elif date:
+    #         filter_set = Q(datetime__datetime__date=date)
+    #     else:
+    #         return []
+    #
+    #     return filter_set
+
     @debug_time_func
     def get_points_fires(self, request, *args, **kwargs):
 
@@ -74,7 +89,7 @@ class PointsForGetDataAboutFires:
             filter_set = Q(datetime__datetime__date=date)
         else:
             return []
-
+        # if self.fetch_filter_set(request, datetime__datetime) == []
         queryset = self.__get_queryset(filter_set=filter_set)
 
         return queryset
@@ -102,8 +117,6 @@ class SettlementLeast5:
         else:
             return [] #filter_set&
 
-        print(12)
-
         queryset = SettlementFireValue. \
             objects. \
             select_related('fire_value'). \
@@ -120,27 +133,6 @@ class SettlementLeast5:
             ql = queryset
 
         return {'settlement_ids': ql}
-
-
-'''
-json
-{
-    date:[
-        year:[
-            month: [
-                    
-            ],
-            month: [
-                    
-            ]    
-        ],
-        year:[
-            
-        ],
-    ]
-}
-
-'''
 
 
 class DateUnique:
@@ -169,7 +161,6 @@ class DateUnique:
 
         return out_json
 
-    @debug_time_func
     def get_dates(self, request, *args, **kwargs):
 
         queryset = self.model.\
@@ -184,6 +175,39 @@ class DateUnique:
 
         return {
             'date': date_json
+        }
+
+    @staticmethod
+    def format_time_of_date(queryset):
+        output_dict = {}
+        for item in queryset:
+            date = item['datetime'].strftime('%Y-%m-%d')
+            time = item['datetime'].strftime('%H:%M')
+            if not output_dict.get(date):
+                output_dict[date] = []
+            output_dict[date].append(time)
+        return output_dict
+
+    def get_time_of_date(self, request, *args, **kwargs):
+        date_min = request.GET.get(DATE_MIN, None)
+        date_max = request.GET.get(DATE_MAX, None)
+        date = request.GET.get(DATE, None)
+
+        if date_min and date_max and date_max != date_min:
+            filter_set = Q(datetime__gte=date_min) \
+                         & Q(datetime__lte=date_max)
+        elif date:
+            filter_set = Q(datetime__date=date)
+        else:
+            return []
+
+        queryset = self.model.\
+            objects.\
+            filter(filter_set).\
+            values('datetime')
+
+        return {
+            'time': self.format_time_of_date(queryset)
         }
 
 
