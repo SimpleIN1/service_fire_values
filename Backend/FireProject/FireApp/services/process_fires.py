@@ -32,7 +32,7 @@ class PointsForGetDataAboutFires:
             select_related('date'). \
             filter(filter_set&Q(tech=False)). \
             values('temperature', 'longitude', 'latitude'). \
-            annotate(datetime=F('datetime__datetime'))
+            annotate(datetime=F('datetime__datetime')).annotate(satellite=F('satellite'))
 
         return {'points': queryset}
 
