@@ -14,7 +14,7 @@ from FireApp.services.pdf.pdf import PDF
 from FireApp.services.process_fires import (PointsForGetDataAboutFires as Points,
                                             DateUnique as Date, SettlementLeast5, PointsForGetDataAboutFires)
 from FireApp.services.shapefile import ShpFile
-
+from FireApp.services.token.file_token_access import create_token, check_token
 
 class FiresTodayAPIView(FiresViewset, Points):
     queryset_func_link = Points.get_points_fires_today
@@ -64,15 +64,28 @@ class TestAPIView(APIView):
         # return Response({queryset})
 
 
+
+# class SettlementAPIView(APIView):
+#     # permission_classes = (IsAuthenticated,)
+#     def get(self, request, *args, **kwargs):
+#         queryset = get_settlement()
+#         return Response({'settlements': queryset})
+
+
 class ShapeFileLoadAPIView(BaseAPIView):
     # permission_classes = (IsAuthenticated,)
 
     def get(self, request, *args, **kwargs):
+        token_access_file = request.GET.get('token')
+        uuid = request.GET.get('uuid')
+
+        is_auth_user = bool(request.user and request.user.is_authenticated)
+        if is_auth_user == False and not (token_access_file or uuid):
+            return Response({'auth_error': '20'}, status=403)
+
+        # print(request.user)
         serializer = ShapeSerializer(data=request.GET)
         serializer.is_valid(raise_exception=True)
-
-        # print('Start function')
-        # start = time.perf_counter()
 
         queryset = PointsForGetDataAboutFires.get_fire_values_for_pdf_shp(
             serializer.data['subject_tag'],
@@ -80,6 +93,20 @@ class ShapeFileLoadAPIView(BaseAPIView):
             # subject_tag='ALTAY',
             # date_time='2022-05-16T05:05:00',
         )
+
+        if not queryset.exists():
+            return Response({'file_info': '1'}, status=400)
+        else:
+            if not token_access_file:
+                return Response({'token': create_token(request.user.jti), 'uuid': request.user.jti}, status=200)
+        
+    #        print('request.user.jti', request.user.jti)
+
+        #print(uuid, token_access_file)
+        if not check_token(uuid, getting_token=token_access_file):
+            return Response({'auth_error': '20'}, status=403)
+
+
         shp = ShpFile(
             queryset=queryset,
             **serializer.data
@@ -87,30 +114,49 @@ class ShapeFileLoadAPIView(BaseAPIView):
             # date_time='2022-05-16T05:05:00',
         )
 
-        if queryset.exists():
-            if shp.is_exist_file(shp.get_path_to_file()):
-                filename = shp.get_path_to_file()
-            else:
-                filename = shp.make_archive()
+        # if queryset.exists():
+        if shp.is_exist_file(shp.get_path_to_file()):
+            filename = shp.get_path_to_file()
         else:
-            return Response({'file_info': '1'}, status=400) # data is not
-        # end = time.perf_counter()
-        # print(f'Time of work - {(end - start):.4f}s')
+            filename = shp.make_archive()
+        # else:
+        #     return Response({'file_info': '1'}, status=400) # data is not
+
         return FileResponse(open(filename, 'rb'))
+        # return Response({'dd': 'ddd'})
 
 
 class PDFLoadAPIView(BaseAPIView):
     # permission_classes = (IsAuthenticated,)
 
     def get(self, request, *args, **kwargs):
+        token_access_file = request.GET.get('token')
+        uuid = request.GET.get('uuid')
+
+        is_auth_user = bool(request.user and request.user.is_authenticated)
+        if is_auth_user == False and not (token_access_file or uuid):
+            return Response({'auth_error': '20'}, status=403)
+
         serializer = PDFSerializer(data=request.GET)
         serializer.is_valid(raise_exception=True)
-        # print('Start function')
-        # start = time.perf_counter()
+
         queryset = PointsForGetDataAboutFires.get_fire_values_for_pdf_shp(
             serializer.data['subject_tag'],
-            serializer.data['date_time']
+            serializer.data['date_time'],
+            # subject_tag='ALTAY',
+            # date_time='2022-05-16T05:05:00',
         )
+       # print('request.user.jti', request.user.jti)
+        if not queryset.exists():
+            return Response({'file_info': '1'}, status=400)
+        else:
+            if not token_access_file:
+                #print(request.user.jti)
+                return Response({'token': create_token(request.user.jti), 'uuid': request.user.jti}, status=200)
+        
+        #print(uuid, token_access_file), check_token(uuid, getting_token=token_access_file) 
+        if not check_token(uuid, getting_token=token_access_file):
+            return Response({'auth_error': '20'}, status=403)
 
         pdf = PDF(
             queryset=queryset,
@@ -120,23 +166,14 @@ class PDFLoadAPIView(BaseAPIView):
             # operator_fio='Илюхин Р.А.',
             # subject_tag='ALTAY'
         )
-        if queryset.exists():
-            if pdf.is_exist_file(pdf.get_path_to_file()):
-                filename = pdf.get_path_to_file()
-            else:
-                filename = pdf.build_file()
+
+        # if queryset.exists():
+        if pdf.is_exist_file(pdf.get_path_to_file()):
+            filename = pdf.get_path_to_file()
         else:
-            return Response({'file_info': '1'}, status=400) # data is not
-        # end = time.perf_counter()
-        # print(f'Time of work - {(end - start):.4f}s')
+            filename = pdf.build_file()
+        # else:
+        #     return Response({'file_info': '1'}, status=400) # data is not
+
         return FileResponse(open(filename, 'rb'))
-
-
-# class SettlementAPIView(APIView):
-#     # permission_classes = (IsAuthenticated,)
-#     def get(self, request, *args, **kwargs):
-#         queryset = get_settlement()
-#         return Response({'settlements': queryset})
-
-
-
+        # return Response({'dd': 'ddd'})

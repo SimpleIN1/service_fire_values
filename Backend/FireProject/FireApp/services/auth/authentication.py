@@ -18,7 +18,7 @@ class RemoteUserAuthentication(BaseAuthentication):
             token = token.split(' ')[1]
         except IndexError:
             return None
-        print(token)
+        #print(token)
         payload = Jwt.get_payload_from_access_token(token)
 
         # if payload is None:
@@ -26,10 +26,11 @@ class RemoteUserAuthentication(BaseAuthentication):
         #         detail='Token is invalid or expired',
         #         code=status.HTTP_401_UNAUTHORIZED
         #     )
-        user = self.User(True)
+        user = self.User(True, payload['jti'])
         # print('REMOTE')
         return (user, None)
 
     class User:
-        def __init__(self, is_authenticated):
+        def __init__(self, is_authenticated, jti):
             self.is_authenticated = is_authenticated
+            self.jti = jti

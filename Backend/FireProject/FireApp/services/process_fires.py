@@ -177,15 +177,25 @@ class DateUnique:
             'date': date_json
         }
 
-    @staticmethod
-    def format_time_of_date(queryset):
+    #@staticmethod
+    def format_time_of_date(self, queryset):
         output_dict = {}
+        #print('---')
+        #print(queryset)
+    
+        #for item in queryset:
+        #    print(item)
+
         for item in queryset:
+            #print(item, '--')
             date = item['datetime'].strftime('%Y-%m-%d')
             time = item['datetime'].strftime('%H:%M')
             if not output_dict.get(date):
                 output_dict[date] = []
+            #print(time)
             output_dict[date].append(time)
+        #print('---')
+        #print(output_dict)
         return output_dict
 
     def get_time_of_date(self, request, *args, **kwargs):
@@ -205,10 +215,13 @@ class DateUnique:
             objects.\
             filter(filter_set).\
             values('datetime')
-
+        
+        #for item in queryset:
+        #    print(item)
+        #print('===')
+        #print(queryset)
         return {
             'time': self.format_time_of_date(queryset)
         }
-
 
 

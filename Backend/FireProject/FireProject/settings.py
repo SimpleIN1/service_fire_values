@@ -28,7 +28,7 @@ ACCESS_SECRET_KEY = os.getenv('ACCESS_SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = (bool(int(os.getenv('DEBUG', 1))))
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['10.4.47.53', 'fam.rcpod.space']
 #45.146.167.78
 
 # Application definition
@@ -63,7 +63,8 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     #
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    #'django.middleware.csrf.CsrfViewMiddleware',
+    'FireApp.middleware.DisableCSRFMiddleware.DisableCSRFMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -72,7 +73,7 @@ MIDDLEWARE = [
     # 'django.middleware.cache.FetchFromCacheMiddleware',
 ]
 
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'http')
+#SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'http')
 
 ROOT_URLCONF = 'FireProject.urls'
 
@@ -192,9 +193,9 @@ CORS_ALLOW_HEADERS = (
 CORS_ALLOW_METHODS = ['DELETE', 'GET', 'OPTIONS', 'PATCH', 'POST', 'PUT']
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
-# CORS_ORIGIN_WHITELIST = [
-#     'http://45.9.43.3:80',
-# ]
+CORS_ORIGIN_WHITELIST = [
+    'https://fam.rcpos.space:443',
+ ]
 
 
 # CACHES = {
@@ -214,16 +215,16 @@ CORS_ALLOW_CREDENTIALS = True
 # CACHE_MIDDLEWARE_SECONDS = 10
 
 
-CACHEOPS = {
-    'FireApp.*': {
-        'ops': 'all',
-        'timeout': 60*60*10,
-    },
-    '*.*': {
-        'timeout': 60*60*10,
-    }
-}
-CACHEOPS_REDIS = os.getenv('BROKER_URL', 'redis://127.0.0.1:6379/3')
+#CACHEOPS = {
+#    'FireApp.*': {
+#        'ops': 'all',
+#        'timeout': 60*60*10,
+#    },
+#    '*.*': {
+#        'timeout': 60*60*10,
+#    }
+#}
+#CACHEOPS_REDIS = os.getenv('BROKER_URL', 'redis://127.0.0.1:6379/3')
 
 
 LOGGING = {

@@ -71,7 +71,7 @@ class ShpFile(Base):
         self.filename = self.make_file_name(is_dir=False)
         self.dir_name = self.make_file_name(is_dir=True, is_shp=True)
         self.path = f'FireApp/services/out_files/shp/{self.dir_name}'
-        self.path_to_file = f'{self.path}/{self.filename}.zip'
+        self.path_to_file = f'{self.path}_arch/{self.filename}.zip'
 
     def write_shp(self, path, filename):
         with fiona.open(f'{path}/{filename}.shp', mode='w', driver='ESRI Shapefile',

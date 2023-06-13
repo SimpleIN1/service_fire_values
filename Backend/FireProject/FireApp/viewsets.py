@@ -1,4 +1,5 @@
 import json
+import time
 
 from django.core import serializers
 from django.http import JsonResponse, HttpResponse, StreamingHttpResponse
@@ -22,11 +23,19 @@ class BaseAPIView(APIView):
         raise exceptions.PermissionDenied(detail=message, code=code)
 
 
-class FiresViewset(APIView):
+class FiresViewset(BaseAPIView):
     queryset_func_link = None
-    permission_classes = (AllowAny, )#(IsAuthenticated, )
+    permission_classes = (IsAuthenticated, )
 
     def get(self, request, *args, **kwargs):
+
+        date = request.GET.get('date')
+        if date:
+            try:
+                time.strptime(date, '%Y-%m-%d')
+            except ValueError:
+                return Response({'fields_error': '18'}, status=400)
+
         queryset = self.queryset_func_link(request, args, kwargs)
         return Response(queryset, status=status.HTTP_200_OK)
 

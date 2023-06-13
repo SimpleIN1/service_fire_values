@@ -8,4 +8,4 @@ class Archiving:
         self.expansion = expansion
 
     def make_archive(self):
-        shutil.make_archive(self.path+'/'+self.filename, self.expansion, self.path)
+        shutil.make_archive(self.path+'_arch/'+self.filename, self.expansion, self.path)

@@ -205,8 +205,11 @@ class PDF(Base, FPDF):
             for i, data_row in enumerate(self.table_data):
                 row = tb.row()
 
-                for datum in data_row:
-                    row.cell(datum)
+                for j, datum in enumerate(data_row):
+                    if i > 1 and j == 4 and (datum == None or datum == ''):
+                        row.cell('Нет данных.')
+                    else:
+                        row.cell(datum)
 
         self.set_font('TimesNewRoman', size=15)
         self.ln(6)
