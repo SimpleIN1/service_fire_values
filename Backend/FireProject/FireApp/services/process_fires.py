@@ -202,24 +202,33 @@ class DateUnique:
         date_min = request.GET.get(DATE_MIN, None)
         date_max = request.GET.get(DATE_MAX, None)
         date = request.GET.get(DATE, None)
+        satellite = request.GET.get('satellite', None)
 
         if date_min and date_max and date_max != date_min:
             filter_set = Q(datetime__gte=date_min) \
                          & Q(datetime__lte=date_max)
+        elif date and satellite:
+            filter_set = Q(datetime__datetime__date=date)&Q(satellite=satellite)
         elif date:
             filter_set = Q(datetime__date=date)
         else:
             return []
 
-        queryset = self.model.\
-            objects.\
-            filter(filter_set).\
-            values('datetime')
-        
-        #for item in queryset:
-        #    print(item)
-        #print('===')
-        #print(queryset)
+        if satellite:
+            queryset = FireValue.\
+                objects.\
+                select_related('datetime').\
+                filter(filter_set).values('datetime__datetime').\
+                annotate(Count('datetime__datetime')).\
+                annotate(datetime=F('datetime__datetime')).\
+                values('datetime')
+                # annotate(Count('datetime__datetime'))
+        else:
+            queryset = self.model.\
+                objects.\
+                filter(filter_set).\
+                values('datetime')
+
         return {
             'time': self.format_time_of_date(queryset)
         }
